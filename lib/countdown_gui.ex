@@ -1,5 +1,6 @@
 defmodule CountdownGui do
   @moduledoc false
+  import Bitwise
   import WX
 
   require Record
@@ -19,9 +20,9 @@ defmodule CountdownGui do
       :wxButton.new(frame, wxID_ANY(), label: "Start", pos: {0, 64})
 
     main_sizer = :wxBoxSizer.new(wxVERTICAL())
-    :wxSizer.add(main_sizer, label)
-    :wxSizer.add(main_sizer, counter)
-    :wxSizer.add(main_sizer, button)
+    :wxSizer.add(main_sizer, label, flag: wxALL(), border: 5)
+    :wxSizer.add(main_sizer, counter, flag: wxALIGN_CENTRE() ||| wxALL(), border: 5)
+    :wxSizer.add(main_sizer, button, flag: wxALIGN_RIGHT() ||| wxALL(), border: 5)
     :wxWindow.setSizer(frame, main_sizer)
     :wxSizer.setSizeHints(main_sizer, frame)
 
