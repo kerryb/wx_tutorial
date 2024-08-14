@@ -10,11 +10,20 @@ defmodule CountdownGui do
     :wx.new()
     frame = :wxFrame.new(:wx.null(), wxID_ANY(), "Countdown")
 
+    label = :wxStaticText.new(frame, wxID_ANY(), "Seconds remaining")
+
     counter =
       :wxTextCtrl.new(frame, wxID_ANY(), value: Integer.to_charlist(seconds), size: {150, 50})
 
     button =
       :wxButton.new(frame, wxID_ANY(), label: "Start", pos: {0, 64})
+
+    main_sizer = :wxBoxSizer.new(wxVERTICAL())
+    :wxSizer.add(main_sizer, label)
+    :wxSizer.add(main_sizer, counter)
+    :wxSizer.add(main_sizer, button)
+    :wxWindow.setSizer(frame, main_sizer)
+    :wxSizer.setSizeHints(main_sizer, frame)
 
     font = :wxFont.new(42, wxFONTFAMILY_DEFAULT(), wxFONTSTYLE_NORMAL(), wxFONTWEIGHT_BOLD())
     :wxTextCtrl.setFont(counter, font)
