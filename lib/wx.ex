@@ -4,4 +4,7 @@ defmodule WX do
   """
 
   def wxID_ANY, do: -1
+  def wxFONTFAMILY_DEFAULT, do: 70
+  def wxFONTSTYLE_NORMAL, do: 90
+  def wxFONTWEIGHT_BOLD, do: 92
 end
