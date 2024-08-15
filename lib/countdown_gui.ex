@@ -11,23 +11,27 @@ defmodule CountdownGui do
     :wx.new()
     frame = :wxFrame.new(:wx.null(), wxID_ANY(), "Countdown")
 
-    label = :wxStaticText.new(frame, wxID_ANY(), "Seconds remaining")
+    label = :wxStaticText.new(frame, wxID_ANY(), "Seconds remaining", style: wxTE_RIGHT())
+    :wxStaticText.wrap(label, 100)
 
     counter =
-      :wxTextCtrl.new(frame, wxID_ANY(), value: Integer.to_charlist(seconds), size: {150, 50}, style: wxTE_RIGHT())
+      :wxTextCtrl.new(frame, wxID_ANY(), value: Integer.to_charlist(seconds), style: wxALIGN_RIGHT())
+
+    font = :wxFont.new(42, wxFONTFAMILY_DEFAULT(), wxFONTSTYLE_NORMAL(), wxFONTWEIGHT_BOLD())
+    :wxTextCtrl.setFont(counter, font)
 
     button =
       :wxButton.new(frame, wxID_ANY(), label: "Start", pos: {0, 64}, style: wxBU_LEFT())
 
+    counter_sizer = :wxBoxSizer.new(wxHORIZONTAL())
+    :wxSizer.add(counter_sizer, label, flag: wxALL() ||| wxALIGN_CENTRE(), border: 5)
+    :wxSizer.add(counter_sizer, counter, flag: wxALL() ||| wxEXPAND(), border: 5, proportion: 1)
+
     main_sizer = :wxBoxSizer.new(wxVERTICAL())
-    :wxSizer.add(main_sizer, label, flag: wxALL() ||| wxALIGN_CENTRE(), border: 5)
-    :wxSizer.add(main_sizer, counter, flag: wxALL() ||| wxEXPAND(), border: 5)
+    :wxSizer.add(main_sizer, counter_sizer, flag: wxALL() ||| wxEXPAND())
     :wxSizer.add(main_sizer, button, flag: wxALL() ||| wxEXPAND(), border: 5)
     :wxWindow.setSizer(frame, main_sizer)
     :wxSizer.setSizeHints(main_sizer, frame)
-
-    font = :wxFont.new(42, wxFONTFAMILY_DEFAULT(), wxFONTSTYLE_NORMAL(), wxFONTWEIGHT_BOLD())
-    :wxTextCtrl.setFont(counter, font)
 
     :wxButton.connect(button, :command_button_clicked,
       callback: &handle_click/2,

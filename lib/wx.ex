@@ -12,6 +12,7 @@ defmodule WX do
   def wxDOWN, do: 128
   def wxALL, do: wxUP() ||| wxDOWN() ||| wxRIGHT() ||| wxLEFT()
   def wxVERTICAL, do: 8
+  def wxHORIZONTAL, do: 4
   def wxALIGN_RIGHT, do: 512
   def wxALIGN_CENTER_HORIZONTAL, do: 256
   def wxALIGN_CENTER_VERTICAL, do: 2048
