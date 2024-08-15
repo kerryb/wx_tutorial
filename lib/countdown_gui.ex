@@ -17,7 +17,7 @@ defmodule CountdownGui do
       :wxTextCtrl.new(frame, wxID_ANY(), value: Integer.to_charlist(seconds), size: {150, 50}, style: wxTE_RIGHT())
 
     button =
-      :wxButton.new(frame, wxID_ANY(), label: "Start", pos: {0, 64})
+      :wxButton.new(frame, wxID_ANY(), label: "Start", pos: {0, 64}, style: wxBU_LEFT())
 
     main_sizer = :wxBoxSizer.new(wxVERTICAL())
     :wxSizer.add(main_sizer, label, flag: wxALL() ||| wxEXPAND(), border: 5)
