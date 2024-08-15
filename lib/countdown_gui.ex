@@ -1,13 +1,30 @@
 defmodule CountdownGui do
-  @moduledoc false
+  @moduledoc """
+  A `GenServer` to display a countdown timer usin g wxWidgets
+  """
+
+  use GenServer
+
   import Bitwise
   import WX
 
   require Record
 
-  Record.defrecord(:wx, Record.extract(:wx, from_lib: "wx/include/wx.hrl"))
+  defmodule State do
+    @moduledoc false
+    defstruct [:counter, :button, :counting_down?, :timer]
+  end
 
-  def start(seconds) when is_integer(seconds) do
+  Record.defrecord(:wx, Record.extract(:wx, from_lib: "wx/include/wx.hrl"))
+  Record.defrecord(:wxCommand, Record.extract(:wxCommand, from_lib: "wx/include/wx.hrl"))
+  Record.defrecord(:wxClose, Record.extract(:wxClose, from_lib: "wx/include/wx.hrl"))
+
+  def start_link(seconds, options \\ []) when is_integer(seconds) do
+    GenServer.start_link(__MODULE__, seconds, options)
+  end
+
+  @impl GenServer
+  def init(seconds) do
     :wx.new()
     frame = :wxFrame.new(:wx.null(), wxID_ANY(), "Countdown")
 
@@ -32,54 +49,50 @@ defmodule CountdownGui do
     :wxSizer.add(main_sizer, button, flag: wxALL() ||| wxEXPAND(), border: 5)
     :wxWindow.setSizer(frame, main_sizer)
     :wxSizer.setSizeHints(main_sizer, frame)
+    :wxWindow.setMinSize(frame, :wxWindow.getSize(frame))
 
-    :wxButton.connect(button, :command_button_clicked,
-      callback: &handle_click/2,
-      userData: %{counter: counter, env: :wx.get_env()}
-    )
+    :wxButton.connect(button, :command_button_clicked, userData: %{counter: counter, env: :wx.get_env()})
+    :wxFrame.connect(frame, :close_window)
 
     :wxFrame.show(frame)
+    {:ok, %State{counter: counter, button: button, counting_down?: false}}
   end
 
-  defp handle_click(wx(obj: button, userData: %{counter: counter, env: env}), _Event) do
-    :wx.set_env(env)
-    label = :wxButton.getLabel(button)
-
-    case List.to_integer(:wxTextCtrl.getValue(counter)) do
-      0 when label == ~c"Start" ->
-        :ok
-
-      _ when label == ~c"Start" ->
-        :wxTextCtrl.setEditable(counter, false)
-        :wxButton.setLabel(button, ~c"Stop")
-        :timer.apply_after(1000, __MODULE__, :update_gui, [counter, button, env])
-
-      _ when label == ~c"Stop" ->
-        :wxTextCtrl.setEditable(counter, true)
-        :wxButton.setLabel(button, ~c"Start")
+  @impl GenServer
+  def handle_info(wx(event: wxCommand(type: :command_button_clicked)), %{counting_down?: false} = state) do
+    if List.to_integer(:wxTextCtrl.getValue(state.counter)) == 0 do
+      {:noreply, state}
+    else
+      :wxTextCtrl.setEditable(state.counter, false)
+      :wxButton.setLabel(state.button, ~c"Stop")
+      timer = Process.send_after(self(), :update_gui, :timer.seconds(1))
+      {:noreply, %{state | counting_down?: true, timer: timer}}
     end
   end
 
-  def update_gui(counter, button, env) do
-    :wx.set_env(env)
+  def handle_info(wx(event: wxCommand(type: :command_button_clicked)), state) do
+    Process.cancel_timer(state.timer)
+    :wxTextCtrl.setEditable(state.counter, true)
+    :wxButton.setLabel(state.button, ~c"Start")
+    {:noreply, %{state | counting_down?: false, timer: nil}}
+  end
 
-    case :wxButton.getLabel(button) do
-      ~c"Stop" ->
-        value = :wxTextCtrl.getValue(counter)
+  def handle_info(wx(event: wxClose(type: :close_window)), state) do
+    {:stop, :normal, state}
+  end
 
-        case List.to_integer(value) do
-          1 ->
-            :wxTextCtrl.setValue(counter, ~c"0")
-            :wxTextCtrl.setEditable(counter, true)
-            :wxButton.setLabel(button, ~c"Start")
+  def handle_info(:update_gui, state) do
+    case List.to_integer(:wxTextCtrl.getValue(state.counter)) do
+      1 ->
+        :wxTextCtrl.setValue(state.counter, ~c"0")
+        :wxTextCtrl.setEditable(state.counter, true)
+        :wxButton.setLabel(state.button, ~c"Start")
+        {:noreply, %{state | counting_down?: false}}
 
-          n ->
-            :wxTextCtrl.setValue(counter, Integer.to_charlist(n - 1))
-            :timer.apply_after(1000, __MODULE__, :update_gui, [counter, button, env])
-        end
-
-      ~c"Start" ->
-        :ok
+      n ->
+        :wxTextCtrl.setValue(state.counter, Integer.to_charlist(n - 1))
+        timer = Process.send_after(self(), :update_gui, :timer.seconds(1))
+        {:noreply, %{state | timer: timer}}
     end
   end
 end
