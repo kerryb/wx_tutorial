@@ -14,7 +14,7 @@ defmodule CountdownGui do
     label = :wxStaticText.new(frame, wxID_ANY(), "Seconds remaining")
 
     counter =
-      :wxTextCtrl.new(frame, wxID_ANY(), value: Integer.to_charlist(seconds), size: {150, 50})
+      :wxTextCtrl.new(frame, wxID_ANY(), value: Integer.to_charlist(seconds), size: {150, 50}, style: wxTE_RIGHT())
 
     button =
       :wxButton.new(frame, wxID_ANY(), label: "Start", pos: {0, 64})
