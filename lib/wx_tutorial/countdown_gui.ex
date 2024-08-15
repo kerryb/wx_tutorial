@@ -1,4 +1,4 @@
-defmodule CountdownGui do
+defmodule WxTutorial.CountdownGui do
   @moduledoc """
   A `GenServer` to display a countdown timer usin g wxWidgets
   """
@@ -78,7 +78,7 @@ defmodule CountdownGui do
   end
 
   def handle_info(wx(event: wxClose(type: :close_window)), state) do
-    {:stop, :normal, state}
+    {:stop, :shutdown, state}
   end
 
   def handle_info(:update_gui, state) do
