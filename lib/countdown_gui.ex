@@ -20,7 +20,7 @@ defmodule CountdownGui do
       :wxButton.new(frame, wxID_ANY(), label: "Start", pos: {0, 64}, style: wxBU_LEFT())
 
     main_sizer = :wxBoxSizer.new(wxVERTICAL())
-    :wxSizer.add(main_sizer, label, flag: wxALL() ||| wxEXPAND(), border: 5)
+    :wxSizer.add(main_sizer, label, flag: wxALL() ||| wxALIGN_CENTRE(), border: 5)
     :wxSizer.add(main_sizer, counter, flag: wxALL() ||| wxEXPAND(), border: 5)
     :wxSizer.add(main_sizer, button, flag: wxALL() ||| wxEXPAND(), border: 5)
     :wxWindow.setSizer(frame, main_sizer)
