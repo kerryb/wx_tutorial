@@ -1,6 +1,6 @@
 defmodule WxTutorial.Player do
   @moduledoc false
-  use GenServer
+  use WxObject
 
   import Bitwise
   import WX
@@ -18,21 +18,20 @@ defmodule WxTutorial.Player do
   Record.defrecord(:wxCommand, Record.extract(:wxCommand, from_lib: "wx/include/wx.hrl"))
   Record.defrecord(:wxClose, Record.extract(:wxClose, from_lib: "wx/include/wx.hrl"))
 
-  def start_link(name, env, frame, arbiter) do
-    GenServer.start_link(__MODULE__, [name, env, frame, arbiter], name: name)
+  def start_link(name, frame, arbiter) do
+    WxObject.start_link(__MODULE__, [name, frame, arbiter], name: name)
   end
 
-  def get_panel(player), do: GenServer.call(player, :get_panel)
+  def get_panel(player), do: WxObject.call(player, :get_panel)
 
-  def reset(player, seconds), do: GenServer.cast(player, {:reset, seconds})
+  def reset(player, seconds), do: WxObject.cast(player, {:reset, seconds})
 
-  def move(player), do: GenServer.cast(player, :move)
+  def move(player), do: WxObject.cast(player, :move)
 
-  def you_win(player), do: GenServer.cast(player, :you_win)
+  def you_win(player), do: WxObject.cast(player, :you_win)
 
-  @impl GenServer
-  def init([name, env, frame, arbiter]) do
-    :wx.set_env(env)
+  @impl WxObject
+  def init([name, frame, arbiter]) do
     panel = :wxPanel.new(frame)
 
     label = :wxStaticText.new(panel, wxID_ANY(), "Seconds remaining", style: wxALIGN_RIGHT())
@@ -61,15 +60,15 @@ defmodule WxTutorial.Player do
 
     :wxButton.connect(button, :command_button_clicked)
 
-    {:ok, %State{panel: panel, counter: counter, button: button, who_am_i: name, arbiter: arbiter}}
+    {panel, %State{panel: panel, counter: counter, button: button, who_am_i: name, arbiter: arbiter}}
   end
 
-  @impl GenServer
+  @impl WxObject
   def handle_call(:get_panel, _from, state) do
     {:reply, state.panel, state}
   end
 
-  @impl GenServer
+  @impl WxObject
   def handle_cast(:move, state) do
     :wxButton.enable(state.button)
     timer = Process.send_after(self(), :update_gui, :timer.seconds(1))
@@ -81,14 +80,15 @@ defmodule WxTutorial.Player do
     {:noreply, state}
   end
 
-  @impl GenServer
-  def handle_info(wx(event: wxCommand(type: :command_button_clicked)), state) do
+  @impl WxObject
+  def handle_event(wx(event: wxCommand(type: :command_button_clicked)), state) do
     Process.cancel_timer(state.timer)
     :wxButton.disable(state.button)
     Arbiter.moved(state.who_am_i)
     {:noreply, %{state | timer: nil}}
   end
 
+  @impl WxObject
   def handle_info(:update_gui, state) do
     case List.to_integer(:wxTextCtrl.getValue(state.counter)) do
       1 ->
