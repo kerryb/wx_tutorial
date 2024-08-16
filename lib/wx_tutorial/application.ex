@@ -8,7 +8,7 @@ defmodule WxTutorial.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {WxTutorial.CountdownGui, 10}
+      WxTutorial.Arbiter
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
