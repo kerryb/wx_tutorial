@@ -3,7 +3,7 @@ defmodule WxTutorial.Player do
   use WxObject
 
   import Bitwise
-  import WX
+  import WxEx.Constants
 
   alias WxTutorial.Arbiter
 
