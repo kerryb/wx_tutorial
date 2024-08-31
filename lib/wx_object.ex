@@ -4,10 +4,7 @@ defmodule WxObject do
   style of `GenServer` etc.
   """
 
-  require Record
-
-  Record.defrecord(:wx, Record.extract(:wx, from_lib: "wx/include/wx.hrl"))
-  Record.defrecord(:wx_ref, Record.extract(:wx_ref, from_lib: "wx/src/wxe.hrl"))
+  import WxEx.Records
 
   defmacro __using__(opts \\ []) do
     quote location: :keep, bind_quoted: [opts: opts] do

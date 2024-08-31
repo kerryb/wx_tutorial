@@ -4,19 +4,14 @@ defmodule WxTutorial.Player do
 
   import Bitwise
   import WxEx.Constants
+  import WxEx.Records
 
   alias WxTutorial.Arbiter
-
-  require Record
 
   defmodule State do
     @moduledoc false
     defstruct [:panel, :counter, :button, :timer, :who_am_i, :arbiter]
   end
-
-  Record.defrecord(:wx, Record.extract(:wx, from_lib: "wx/include/wx.hrl"))
-  Record.defrecord(:wxCommand, Record.extract(:wxCommand, from_lib: "wx/include/wx.hrl"))
-  Record.defrecord(:wxClose, Record.extract(:wxClose, from_lib: "wx/include/wx.hrl"))
 
   def start_link(name, frame, arbiter) do
     WxObject.start_link(__MODULE__, [name, frame, arbiter], name: name)

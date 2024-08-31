@@ -3,14 +3,9 @@ defmodule WxTutorial.Arbiter do
   use WxObject
 
   import WxEx.Constants
+  import WxEx.Records
 
   alias WxTutorial.Player
-
-  require Record
-
-  Record.defrecord(:wx, Record.extract(:wx, from_lib: "wx/include/wx.hrl"))
-  Record.defrecord(:wxClose, Record.extract(:wxClose, from_lib: "wx/include/wx.hrl"))
-  Record.defrecord(:wx_ref, Record.extract(:wx_ref, from_lib: "wx/src/wxe.hrl"))
 
   def start_link(_arg) do
     wx_ref() = ref = WxObject.start_link(__MODULE__, nil, name: __MODULE__)
