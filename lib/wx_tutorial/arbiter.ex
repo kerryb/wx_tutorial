@@ -1,9 +1,7 @@
 defmodule WxTutorial.Arbiter do
   @moduledoc false
   use WxObject
-
-  import WxEx.Constants
-  import WxEx.Records
+  use WxEx
 
   alias WxTutorial.Player
 
