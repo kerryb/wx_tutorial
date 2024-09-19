@@ -23,7 +23,7 @@ defmodule WxTutorial.MixProject do
   defp deps do
     [
       {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:wx_ex, "~> 0.3", runtime: false}
+      {:wx_ex, "~> 0.4.2", runtime: false}
     ]
   end
 end

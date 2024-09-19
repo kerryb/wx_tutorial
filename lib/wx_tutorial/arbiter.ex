@@ -6,7 +6,7 @@ defmodule WxTutorial.Arbiter do
   alias WxTutorial.Player
 
   def start_link(_arg) do
-    wx_ref() = ref = WxObject.start_link(__MODULE__, nil, name: __MODULE__)
+    wx_ref() = ref = WxObject.start_link(__MODULE__, __MODULE__, nil)
     {:ok, WxObject.get_pid(ref)}
   end
 

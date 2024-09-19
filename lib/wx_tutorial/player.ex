@@ -13,7 +13,7 @@ defmodule WxTutorial.Player do
   end
 
   def start_link(name, frame, arbiter) do
-    WxObject.start_link(__MODULE__, [name, frame, arbiter], name: name)
+    WxObject.start_link(name, __MODULE__, [name, frame, arbiter])
   end
 
   def get_panel(player), do: WxObject.call(player, :get_panel)

@@ -1,5 +1,5 @@
 %{
   "styler": {:hex, :styler, "1.0.0", "87daf4a8e421d7678da78f9532a632974de6b8060b80d7827abec3bca5140173", [:mix], [], "hexpm", "4ba5bc40c5eaebe2bb05ec0bb7b5a889d38c6ea6865c584dffd360b3a94ec625"},
-  "wx_ex": {:hex, :wx_ex, "0.3.0", "00dabd076b8ea200c5dac459de215dacb8143138d3ac09513c82fc42b67bc0f5", [:mix], [{:wx_ex_compiler, "> 0.0.0", [hex: :wx_ex_compiler, repo: "hexpm", optional: false]}], "hexpm", "eb17176a68cd16ff1bbdfe96615202cf8998125465cffe5fe26624cecfb0f52f"},
-  "wx_ex_compiler": {:hex, :wx_ex_compiler, "0.1.0", "fdfb7ec6f7d6f58bf9003ff27b83133cba0733510cbcb8598e1bf5c2d769b930", [:mix], [], "hexpm", "88b46c16d83910cbe1f57d29a5ad2e99ae23513e25bec4eb0cb5dadcbf705296"},
+  "wx_ex": {:hex, :wx_ex, "0.4.2", "85a14b174047bf24ee4eadb9ce2908c2b630bbfd6a1dc52de8fac15b7edb2d84", [:make, :mix], [{:wx_ex_compiler, "0.4.2", [hex: :wx_ex_compiler, repo: "hexpm", optional: false]}], "hexpm", "fc536d7c0f6dddcebc9b932f4a4e77b23770a0c88460441446ebca1b07486eb8"},
+  "wx_ex_compiler": {:hex, :wx_ex_compiler, "0.4.2", "3678c19cba5de952ab2781008bcc0b7d29ea1601f9ea58cfd0e082048e0c09e9", [:mix], [], "hexpm", "de329e1ea69b07016ff53f5ff263cc7142214ffe8bb46bb8a6cc0be360a73c38"},
 }
