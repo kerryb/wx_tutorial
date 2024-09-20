@@ -1,20 +1,25 @@
 defmodule WxTutorial.Arbiter do
   @moduledoc false
-  use WxObject
+  @behaviour :wx_object
+
   use WxEx
 
   alias WxTutorial.Player
 
-  def start_link(_arg) do
-    wx_ref() = ref = WxObject.start_link(__MODULE__, __MODULE__, nil)
-    {:ok, WxObject.get_pid(ref)}
+  def child_spec(args) do
+    %{id: __MODULE__, start: {__MODULE__, :start_link, args}}
   end
 
-  def moved(player), do: WxObject.cast(__MODULE__, {:moved, player})
+  def start_link do
+    wx_ref() = ref = :wx_object.start_link({:local, __MODULE__}, __MODULE__, nil, [])
+    {:ok, :wx_object.get_pid(ref)}
+  end
 
-  def i_lose(player), do: WxObject.cast(__MODULE__, {:i_lose, player})
+  def moved(player), do: :wx_object.cast(__MODULE__, {:moved, player})
 
-  @impl WxObject
+  def i_lose(player), do: :wx_object.cast(__MODULE__, {:i_lose, player})
+
+  @impl :wx_object
   def init(_arg) do
     :wx.new()
 
@@ -36,7 +41,7 @@ defmodule WxTutorial.Arbiter do
     {frame, nil}
   end
 
-  @impl WxObject
+  @impl :wx_object
   def handle_cast({:moved, :player_1}, state) do
     Player.move(:player_2)
     {:noreply, state}
@@ -57,22 +62,22 @@ defmodule WxTutorial.Arbiter do
     {:noreply, state}
   end
 
-  @impl WxObject
+  @impl :wx_object
   def handle_info({:reset, seconds}, state) do
     Player.reset(:player_1, seconds)
     Player.reset(:player_2, seconds)
     {:noreply, state}
   end
 
-  @impl WxObject
+  @impl :wx_object
   def handle_event(wx(event: wxClose()), state) do
     {:stop, :normal, state}
   end
 
-  @impl WxObject
+  @impl :wx_object
   def terminate(reason, _state) do
-    WxObject.stop(:player_1, reason)
-    WxObject.stop(:player_2, reason)
+    :wx_object.stop(:player_1, reason, 1000)
+    :wx_object.stop(:player_2, reason, 1000)
     :wx.destroy()
     :ok
   end

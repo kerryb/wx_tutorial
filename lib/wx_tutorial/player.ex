@@ -1,6 +1,7 @@
 defmodule WxTutorial.Player do
   @moduledoc false
-  use WxObject
+  @behaviour :wx_object
+
   use WxEx
 
   import Bitwise
@@ -13,18 +14,18 @@ defmodule WxTutorial.Player do
   end
 
   def start_link(name, frame, arbiter) do
-    WxObject.start_link(name, __MODULE__, [name, frame, arbiter])
+    :wx_object.start_link({:local, name}, __MODULE__, [name, frame, arbiter], [])
   end
 
-  def get_panel(player), do: WxObject.call(player, :get_panel)
+  def get_panel(player), do: :wx_object.call(player, :get_panel)
 
-  def reset(player, seconds), do: WxObject.cast(player, {:reset, seconds})
+  def reset(player, seconds), do: :wx_object.cast(player, {:reset, seconds})
 
-  def move(player), do: WxObject.cast(player, :move)
+  def move(player), do: :wx_object.cast(player, :move)
 
-  def you_win(player), do: WxObject.cast(player, :you_win)
+  def you_win(player), do: :wx_object.cast(player, :you_win)
 
-  @impl WxObject
+  @impl :wx_object
   def init([name, frame, arbiter]) do
     panel = :wxPanel.new(frame)
 
@@ -57,12 +58,12 @@ defmodule WxTutorial.Player do
     {panel, %State{panel: panel, counter: counter, button: button, who_am_i: name, arbiter: arbiter}}
   end
 
-  @impl WxObject
+  @impl :wx_object
   def handle_call(:get_panel, _from, state) do
     {:reply, state.panel, state}
   end
 
-  @impl WxObject
+  @impl :wx_object
   def handle_cast(:move, state) do
     :wxButton.enable(state.button)
     timer = Process.send_after(self(), :update_gui, :timer.seconds(1))
@@ -74,7 +75,7 @@ defmodule WxTutorial.Player do
     {:noreply, state}
   end
 
-  @impl WxObject
+  @impl :wx_object
   def handle_event(wx(event: wxCommand(type: :command_button_clicked)), state) do
     Process.cancel_timer(state.timer)
     :wxButton.disable(state.button)
@@ -82,7 +83,7 @@ defmodule WxTutorial.Player do
     {:noreply, %{state | timer: nil}}
   end
 
-  @impl WxObject
+  @impl :wx_object
   def handle_info(:update_gui, state) do
     case List.to_integer(:wxTextCtrl.getValue(state.counter)) do
       1 ->
