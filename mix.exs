@@ -22,8 +22,9 @@ defmodule WxTutorial.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:dialyxir, "> 0.0.0", optional: true, only: :dev, runtime: false},
       {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:wx_ex, "~> 0.4.2", runtime: false}
+      {:wx_ex, "~> 0.4.2"}
     ]
   end
 end
